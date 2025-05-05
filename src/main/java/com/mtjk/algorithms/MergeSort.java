@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MergeSort {
 
+    // Próg dla przełączenia na sortowanie przez wstawianie
+    private static final int INSERTION_SORT_THRESHOLD = 10;
+
     // Metoda główna do sortowania tablicy przy użyciu algorytmu Merge Sort
     public static void sort(int[] array) {
         if (array == null || array.length < 2) {
@@ -16,6 +19,12 @@ public class MergeSort {
 
     // Metoda pomocnicza do sortowania podtablicy od left do right
     private static void sort(int[] array, int left, int right) {
+        // Dla małych podtablic używamy sortowania przez wstawianie
+        if (right - left <= INSERTION_SORT_THRESHOLD) {
+            insertionSort(array, left, right);
+            return;
+        }
+
         if (left < right) {
             // Znalezienie środka podtablicy
             int middle = left + (right - left) / 2;
@@ -26,6 +35,21 @@ public class MergeSort {
 
             // Scalanie posortowanych połówek
             merge(array, left, middle, right);
+        }
+    }
+
+    // Sortowanie przez wstawianie dla małych podtablic
+    private static void insertionSort(int[] array, int left, int right) {
+        for (int i = left + 1; i <= right; i++) {
+            int key = array[i];
+            int j = i - 1;
+
+            while (j >= left && array[j] > key) {
+                array[j + 1] = array[j];
+                j--;
+            }
+
+            array[j + 1] = key;
         }
     }
 

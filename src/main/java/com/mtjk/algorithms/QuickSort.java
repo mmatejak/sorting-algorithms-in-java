@@ -9,7 +9,7 @@ public class QuickSort {
     // Metoda sortowania tablicy przy użyciu algorytmu Quick Sort
     public static void sort(int[] array, int low, int high) {
         if (low < high) {
-            // Znalezienie indeksu pivota
+            // Znalezienie indeksu pivota z użyciem metody median-of-three
             int pivotIndex = partition(array, low, high);
 
             // Rekurencyjne sortowanie części przed i po pivocie
@@ -18,9 +18,39 @@ public class QuickSort {
         }
     }
 
+    // Metoda do wyboru pivota używając strategii median-of-three
+    private static int medianOfThree(int[] array, int low, int high) {
+        int mid = low + (high - low) / 2;
+
+        // Sortowanie trzech elementów: low, mid, high
+        if (array[low] > array[mid]) {
+            swap(array, low, mid);
+        }
+        if (array[low] > array[high]) {
+            swap(array, low, high);
+        }
+        if (array[mid] > array[high]) {
+            swap(array, mid, high);
+        }
+
+        // Teraz array[mid] jest medianą z trzech elementów
+        // Zamieniamy ją z przedostatnim elementem, aby nie zakłócać partycjonowania
+        swap(array, mid, high - 1);
+        return array[high - 1];
+    }
+
     // Metoda do podziału tablicy na dwie części wokół pivota
     private static int partition(int[] array, int low, int high) {
-        int pivot = array[high]; // Wybór ostatniego elementu jako pivota
+        // Jeśli mamy wystarczająco dużo elementów, używamy median-of-three
+        int pivot;
+        if (high - low > 2) {
+            pivot = medianOfThree(array, low, high);
+            // Pivot jest teraz na pozycji high-1
+            high = high - 1;
+        } else {
+            pivot = array[high]; // Dla małych tablic używamy ostatniego elementu
+        }
+
         int smallerElementIndex = low - 1; // Indeks mniejszego elementu
 
         for (int currentIndex = low; currentIndex < high; currentIndex++) {
